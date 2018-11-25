@@ -496,10 +496,10 @@ func virtualmachine() {
 
 			mode = IR.opd1
 			if mode == 1 {
-				fmt.Print(registers[3])
+				fmt.Println("Fibonacci is ", registers[3])
 			} else if mode == 2 {
-				fmt.Print("Enter a num for fib: ")
-				registers[3] = 2
+				// fmt.Print("Enter a num for fib: ")
+				registers[3] = 5
 				// _, _ = fmt.Scanf("%d", &registers[3])
 			} else if mode == 3 {
 				val = registers[3]
