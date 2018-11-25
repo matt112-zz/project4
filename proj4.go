@@ -499,7 +499,7 @@ func virtualmachine() {
 				fmt.Println("Fibonacci is ", registers[3])
 			} else if mode == 2 {
 				// fmt.Print("Enter a num for fib: ")
-				registers[3] = 5
+				registers[3] = 10
 				// _, _ = fmt.Scanf("%d", &registers[3])
 			} else if mode == 3 {
 				val = registers[3]

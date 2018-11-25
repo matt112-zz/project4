@@ -70,9 +70,11 @@ fib     MOV     R8      SP          # test for SO with Ret Addr + PFP + passed p
 fib_else MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
         ADI     R8      -4          # Adjust for space for passed paramters
+        ADI     R8      -24         # Space for R1-R6
         CMP     R8      SL          # test for SO
         BLT     R8      OVERFLOW
 
+    # Store RA and PFP
         MOV     R8      FP          # Save FP in R8, this will be the PFP
         ADI     FP      -36         # t1
         LDR     R1      FP
@@ -81,6 +83,20 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
         MOV     R6      SP          # R6 holding address for Rtn Address
         ADI     SP      -4          # Space for PFP
         STR     R8      SP          # PFP to Top of Stack
+
+    # Save registers
+        ADI     SP      -4
+        STR     R1      SP
+        ADI     SP      -4
+        STR     R2      SP
+        ADI     SP      -4
+        STR     R3      SP
+        ADI     SP      -4
+        STR     R4      SP
+        ADI     SP      -4
+        STR     R5      SP
+        ADI     SP      -4
+        STR     R6      SP
 
     # Pass parameters on the stack
         ADI     SP      -4
@@ -94,6 +110,21 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
         
     # Jump to function    
         JMP     fib
+    
+    # Restore registers
+        MOV     R7      FP
+        ADI     R7      -8
+        LDR     R1      R7 
+        ADI     R7      -4
+        LDR     R2      R7
+        ADI     R7      -4
+        LDR     R3      R7
+        ADI     R7      -4
+        LDR     R4      R7
+        ADI     R7      -4
+        LDR     R5      R7
+        ADI     R7      -4
+        LDR     R6      R7
 
     # get fib(n) return value
         LDR     R3      SP          # should be store in a temp
@@ -105,9 +136,11 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
         MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
         ADI     R8      -4          # Adjust for space for passed paramters
+        ADI     R8      -24         # Space for R1-R6
         CMP     R8      SL          # test for SO
         BLT     R8      OVERFLOW
 
+    # Store RA and PFP
         MOV     R8      FP          # Save FP in R8, this will be the PFP
         ADI     FP      -40         # t2
         LDR     R1      FP
@@ -116,7 +149,21 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
         MOV     R6      SP          # R6 holding address for Rtn Address
         ADI     SP      -4          # Space for PFP
         STR     R8      SP          # PFP to Top of Stack
-
+ 
+    # Save registers
+        ADI     SP      -4
+        STR     R1      SP
+        ADI     SP      -4
+        STR     R2      SP
+        ADI     SP      -4
+        STR     R3      SP
+        ADI     SP      -4
+        STR     R4      SP
+        ADI     SP      -4
+        STR     R5      SP
+        ADI     SP      -4
+        STR     R6      SP
+        
     # Pass parameters on the stack
         ADI     SP      -4
         STR     R1      SP          # t2 = n-2
@@ -129,6 +176,21 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
         
     # Jump to function    
         JMP     fib
+
+    # Restore registers
+        MOV     R7      FP
+        ADI     R7      -8
+        LDR     R1      R7 
+        ADI     R7      -4
+        LDR     R2      R7
+        ADI     R7      -4
+        LDR     R3      R7
+        ADI     R7      -4
+        LDR     R4      R7
+        ADI     R7      -4
+        LDR     R5      R7
+        ADI     R7      -4
+        LDR     R6      R7
 
     # get fib(n) return value from TOS -4 (prev act record)
         LDR     R3      SP          
@@ -187,12 +249,6 @@ START   MOV     R8      SP          # compute space needed for activation record
         ADI     SP      -4          # Space for PFP
         STR     R8      SP          # PFP to Top of Stack
 
-        LDR     R1      X
-        LDR     R2      IV
-        LDR     R3      II
-        LDR     R4      IX
-        LDR     R5      V
-        TRP 99
     # Save registers
         ADI     SP      -4
         STR     R1      SP
@@ -221,7 +277,6 @@ START   MOV     R8      SP          # compute space needed for activation record
         JMP     fib
     
     # Restore registers
-        TRP 99
         MOV     R7      FP
         ADI     R7      -8
         LDR     R1      R7 
@@ -240,6 +295,7 @@ START   MOV     R8      SP          # compute space needed for activation record
         LDR     R3      SP
 
         TRP     1
+        TRP 99
         JMP START
 
 fib_stop    TRP 99
