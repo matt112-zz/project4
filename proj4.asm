@@ -84,6 +84,29 @@ fib_str2    .BYT    32
             .BYT    32
             .BYT    3
 
+part1_str   .BYT    80      # P
+            .BYT    97      # a
+            .BYT    114     # r
+            .BYT    116     # t
+            .BYT    32          
+            .BYT    49      # 1
+            .BYT    58      # :
+            .BYT    10
+            .BYT    3
+
+part2_str   .BYT    80      # P
+            .BYT    97      # a
+            .BYT    114     # r
+            .BYT    116     # t
+            .BYT    32          
+            .BYT    50      # 2
+            .BYT    58      # :
+            .BYT    10
+            .BYT    3
+
+
+
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~ Function printf ~~~~~~~~~~~~~~~~~~~~~~~~~
 printf  MOV     R6      FP 
@@ -330,6 +353,66 @@ START   MOV     R8      SP          # compute space needed for activation record
         CMP     R8      SL          # test for SO
         BLT     R8      OVERFLOW
 
+    # store RA and PFP
+        MOV     R8      FP          # Save FP in R8, this will be the PFP
+        MOV     FP      SP          # Point at Current Activation Record (FP = SP)
+        ADI     SP      -0          # Adjust SP for Rtn Address. To be pushed on later
+        MOV     R6      SP          # R6 holding address for Rtn Address
+        ADI     SP      -4          # Space for PFP
+        STR     R8      SP          # PFP to Top of Stack
+
+    # Save registers
+        ADI     SP      -4
+        STR     R1      SP
+        ADI     SP      -4
+        STR     R2      SP
+        ADI     SP      -4
+        STR     R3      SP
+        ADI     SP      -4
+        STR     R4      SP
+        ADI     SP      -4
+        STR     R5      SP
+        ADI     SP      -4
+        STR     R6      SP
+        
+    # Pass parameters on the stack
+        ADI     SP      -4
+        LDA     R4      part1_str
+        STR     R4      SP          
+
+    # Update the return address in the Stack Frame
+        ADI     SP      -4          # SP points to word before activation rec
+        MOV     R7      PC
+        ADI     R7      48          # Compute Return Address (12 * # of instructions until instruction after JMP)
+        STR     R7      R6          # push return address on the stack. R7 is holding ret address -> R6 holding stack location for ret address
+        
+    # Jump to function    
+        JMP     printf
+    
+    # Restore registers
+        MOV     R7      FP
+        ADI     R7      -8
+        LDR     R1      R7 
+        ADI     R7      -4
+        LDR     R2      R7
+        ADI     R7      -4
+        LDR     R3      R7
+        ADI     R7      -4
+        LDR     R4      R7
+        ADI     R7      -4
+        LDR     R5      R7
+        ADI     R7      -4
+        LDR     R6      R7
+
+    # Call fib()
+
+ffib        MOV     R8      SP          # compute space needed for activation record
+        ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
+        ADI     R8      -4          # Adjust for space for passed paramter n
+        ADI     R8      -24         # Space for R1-R6
+        CMP     R8      SL          # test for SO
+        BLT     R8      OVERFLOW
+
         TRP     2                   # get int from user
         LDB     R1      ZERO        # check stop condition
         CMP     R1      R3
@@ -538,7 +621,7 @@ START   MOV     R8      SP          # compute space needed for activation record
         LDB     R3      NL
         TRP     3
         
-        JMP START
+        JMP ffib
 
 fib_stop    TRP 99
 
@@ -581,6 +664,71 @@ w_parr  LDA     R4      Array
  e_w_parr   LDB     R3      NL
             TRP     3
  
+
+# ################ END OF PART 1 ########################
+
+        TRP 99
+        MOV     R8      SP          # compute space needed for activation record
+        ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
+        ADI     R8      -4          # Adjust for space for passed paramter n
+        ADI     R8      -24         # Space for R1-R6
+        CMP     R8      SL          # test for SO
+        BLT     R8      OVERFLOW
+
+    # store RA and PFP
+        MOV     R8      FP          # Save FP in R8, this will be the PFP
+        MOV     FP      SP          # Point at Current Activation Record (FP = SP)
+        ADI     SP      -0          # Adjust SP for Rtn Address. To be pushed on later
+        MOV     R6      SP          # R6 holding address for Rtn Address
+        ADI     SP      -4          # Space for PFP
+        STR     R8      SP          # PFP to Top of Stack
+
+    # Save registers
+        ADI     SP      -4
+        STR     R1      SP
+        ADI     SP      -4
+        STR     R2      SP
+        ADI     SP      -4
+        STR     R3      SP
+        ADI     SP      -4
+        STR     R4      SP
+        ADI     SP      -4
+        STR     R5      SP
+        ADI     SP      -4
+        STR     R6      SP
+        
+    # Pass parameters on the stack
+        ADI     SP      -4
+        LDA     R4      part1_str
+        STR     R4      SP          
+
+    # Update the return address in the Stack Frame
+        ADI     SP      -4          # SP points to word before activation rec
+        MOV     R7      PC
+        ADI     R7      48          # Compute Return Address (12 * # of instructions until instruction after JMP)
+        STR     R7      R6          # push return address on the stack. R7 is holding ret address -> R6 holding stack location for ret address
+        
+    # Jump to function    
+        JMP     printf
+    
+    # Restore registers
+        MOV     R7      FP
+        ADI     R7      -8
+        LDR     R1      R7 
+        ADI     R7      -4
+        LDR     R2      R7
+        ADI     R7      -4
+        LDR     R3      R7
+        ADI     R7      -4
+        LDR     R4      R7
+        ADI     R7      -4
+        LDR     R5      R7
+        ADI     R7      -4
+        LDR     R6      R7
+
+
+
+
         TRP     0       # END OF PROGRAM
 
 
