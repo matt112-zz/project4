@@ -1,6 +1,41 @@
+Array       .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+            .INT    0
+
+CNT         .INT    0       # max size of count is 30
+
 EOT         .BYT        3
 NL          .BYT        10
 Space       .BYT        32
+
+COMMA       .BYT        44
 
 ZERO        .INT    0
 I           .INT    1
@@ -326,6 +361,17 @@ START   MOV     R8      SP          # compute space needed for activation record
         ADI     SP      -4
         STR     R3      SP          # n value for fib(n)
 
+    # Push X into the Array
+        LDA     R5      Array
+        LDR     R4      CNT
+        LDR     R1      IV
+        MUL     R4      R1
+        ADD     R5      R4
+        STR     R3      R5
+        LDR     R4      CNT
+        ADI     R4      1
+        STR     R4      CNT    
+
     # Update the return address in the Stack Frame
         ADI     SP      -4          # SP points to word before activation rec
         MOV     R7      PC
@@ -353,6 +399,17 @@ START   MOV     R8      SP          # compute space needed for activation record
 
     # get fib(n) return value from TOS -4 (prev act record)
         LDR     R5      SP
+
+    # Push Y into the Array
+        LDA     R4      Array
+        LDR     R7      CNT
+        LDR     R1      IV
+        MUL     R7      R1
+        ADD     R4      R7
+        STR     R5      R4
+        LDR     R7      CNT
+        ADI     R7      1
+        STR     R7      CNT 
 
     # prepare for printf
         MOV     R8      SP          # compute space needed for activation record
@@ -387,7 +444,7 @@ START   MOV     R8      SP          # compute space needed for activation record
     # Pass parameters on the stack
         ADI     SP      -4
         LDA     R4      fib_str1
-        STR     R4      SP          # n value for fib(n)
+        STR     R4      SP          
 
     # Update the return address in the Stack Frame
         ADI     SP      -4          # SP points to word before activation rec
@@ -450,7 +507,7 @@ START   MOV     R8      SP          # compute space needed for activation record
     # Pass parameters on the stack
         ADI     SP      -4
         LDA     R4      fib_str2
-        STR     R4      SP          # n value for fib(n)
+        STR     R4      SP          
 
     # Update the return address in the Stack Frame
         ADI     SP      -4          # SP points to word before activation rec
@@ -481,11 +538,50 @@ START   MOV     R8      SP          # compute space needed for activation record
         LDB     R3      NL
         TRP     3
         
-        TRP 99
         JMP START
 
 fib_stop    TRP 99
-END     LDR SS  R3
+
+        
+        LDR     R6      ZERO
+        LDR     R2      I
+        LDR     R1      IV
+w_parr  LDA     R4      Array
+        MOV     R7      R6
+        MUL     R7      R1
+        ADD     R4      R7
+        LDR     R3      R4
+        TRP     1
+        LDB     R3      COMMA
+        TRP     3
+        LDB     R3      Space
+        TRP     3
+        ADI     R6      1
+        LDA     R4      Array
+        LDR     R5      CNT
+        SUB     R5      R2
+        MUL     R5      R1
+        ADD     R4      R5
+        LDR     R3      R4
+        TRP     1
+        ADI     R2      1
+        LDR     R5      CNT
+        LDR     R4      II
+        DIV     R5      R4
+        MOV     R7      R6
+        CMP     R7      R5
+        BRZ     R7      e_w_parr
+        LDB     R3      COMMA
+        TRP     3
+        LDB     R3      Space
+        TRP     3
+        JMP     w_parr
+
+
+ e_w_parr   LDB     R3      NL
+            TRP     3
+ 
+        TRP     0       # END OF PROGRAM
 
 
 UNDERFLOW   TRP     0

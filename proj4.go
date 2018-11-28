@@ -118,7 +118,7 @@ func initInstructionTable() {
 }
 
 func writeInt(mem []byte, val string) error {
-	fmt.Println("writeInt() with ", val)
+	//fmt.Println("writeInt() with ", val)
 
 	if i, err := strconv.Atoi(val); err == nil {
 		ui := uint32(i)
@@ -130,7 +130,7 @@ func writeInt(mem []byte, val string) error {
 }
 
 func writeBytecode(mem []byte, bytecode string) {
-	fmt.Println("writeBytecode() with ", bytecode)
+	//fmt.Println("writeBytecode() with ", bytecode)
 
 	tokens := strings.Fields(bytecode)
 	writeInt(mem, tokens[0])
@@ -141,7 +141,7 @@ func writeBytecode(mem []byte, bytecode string) {
 }
 
 func fetch(mem []byte) Instruction {
-	// fmt.Println("fetchInstruction()")
+	// //fmt.Println("fetchInstruction()")
 
 	var ins int32
 	var op1 int32
@@ -157,12 +157,12 @@ func fetch(mem []byte) Instruction {
 		opd2:   op2,
 	}
 
-	// fmt.Println("With ins(", ins, ") op1(", op1, ") op2(", op2, ")")
+	// //fmt.Println("With ins(", ins, ") op1(", op1, ") op2(", op2, ")")
 	return IR
 }
 
 func fetchInt(mem []byte) int32 {
-	// fmt.Println("fetchInt()")
+	// //fmt.Println("fetchInt()")
 	var v int32
 	v = int32(binary.LittleEndian.Uint32(mem[0:]))
 	return v
@@ -176,7 +176,7 @@ func printMemory() {
 }
 
 func firstpass(filename string) {
-	fmt.Println("~~~~~~~~~~~~~Start of first pass~~~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~~Start of first pass~~~~~~~~~~~~~~~~")
 
 	var count int32
 	file, err := os.Open(filename)
@@ -202,13 +202,13 @@ func firstpass(filename string) {
 			continue
 		}
 
-		fmt.Println("First pass with line: ", line, " at memory location : ", count)
+		//fmt.Println("First pass with line: ", line, " at memory location : ", count)
 
 		// traps and such
 		if len(tokens) == 2 {
-			fmt.Println("There are two tokens")
+			//fmt.Println("There are two tokens")
 			if _, ok := instruction_table[tokens[0]]; ok {
-				// fmt.Println("found ", tokens[0], " in instruction table!")
+				// //fmt.Println("found ", tokens[0], " in instruction table!")
 				count += INSTRUCTION_SIZE
 			} else {
 				directive = tokens[0]
@@ -219,24 +219,24 @@ func firstpass(filename string) {
 				}
 			}
 		} else if len(tokens) == 3 {
-			fmt.Println("There are 3 tokens")
+			//fmt.Println("There are 3 tokens")
 			if _, ok := instruction_table[tokens[0]]; ok {
 				count += INSTRUCTION_SIZE
 			} else if _, ok := instruction_table[tokens[1]]; ok {
-				// fmt.Println("found ", tokens[0], " in instruction table!")
+				// //fmt.Println("found ", tokens[0], " in instruction table!")
 				if _, ok := symbol_table[tokens[0]]; !ok {
-					// fmt.Println("Label not in symbol table. Label for an instruction.")
+					// //fmt.Println("Label not in symbol table. Label for an instruction.")
 					symbol_table[tokens[0]] = count
 					count += INSTRUCTION_SIZE
 				} else {
-					fmt.Println(tokens[0])
+					//fmt.Println(tokens[0])
 					log.Fatal("Duplicate symbol in table")
 				}
 			} else { // directive
 				label = tokens[0]
 				directive = tokens[1]
 				if _, ok := symbol_table[label]; !ok {
-					// fmt.Println("Label not in symbol table")
+					// //fmt.Println("Label not in symbol table")
 					symbol_table[label] = count
 					if directive == INT_DIR {
 						count += INT_SIZE
@@ -244,29 +244,29 @@ func firstpass(filename string) {
 						count += BYT_SIZE
 					}
 				} else {
-					fmt.Println(label)
+					//fmt.Println(label)
 					log.Fatal("Duplicate symbol in table")
 				}
 			}
 		} else if len(tokens) == 4 {
-			fmt.Println("There are 4 tokens")
+			//fmt.Println("There are 4 tokens")
 			label = tokens[0]
 			if _, ok := symbol_table[label]; !ok {
 				symbol_table[label] = count
 				count += INSTRUCTION_SIZE
 			} else {
-				// fmt.Println(label)
+				// //fmt.Println(label)
 				// fmt.Fatal("Duplicate symbol in table")
 			}
 		}
 	}
 
-	fmt.Println("~~~~~~~~~~~~~~~~~End of first pass~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~~~~~~End of first pass~~~~~~~~~~~~~~")
 
 }
 
 func secondpass(filename string) {
-	fmt.Println("~~~~~~~~~~~~Start of second pass~~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~Start of second pass~~~~~~~~~~~~~~~")
 
 	var count int32
 	file, err := os.Open(filename)
@@ -301,14 +301,14 @@ func secondpass(filename string) {
 			continue
 		}
 
-		fmt.Println("Second pass with line: ", line, " at memory location : ", count)
+		//fmt.Println("Second pass with line: ", line, " at memory location : ", count)
 
 		// traps and such
 		if len(tokens) == 2 {
-			fmt.Println("There are 2 tokens")
+			//fmt.Println("There are 2 tokens")
 
 			if _, ok := instruction_table[tokens[0]]; ok {
-				// fmt.Println("found ", tokens[0], " in instruction table!")
+				// //fmt.Println("found ", tokens[0], " in instruction table!")
 				instruction = tokens[0]
 				operand = tokens[1:]
 				bytecode = instruction_to_bytecode(instruction, operand)
@@ -327,7 +327,7 @@ func secondpass(filename string) {
 				}
 			}
 		} else if len(tokens) == 3 {
-			fmt.Println("There are 3 tokens")
+			//fmt.Println("There are 3 tokens")
 
 			if _, ok := instruction_table[tokens[0]]; ok {
 				instruction = tokens[0]
@@ -336,16 +336,16 @@ func secondpass(filename string) {
 				writeBytecode(memory[count:], bytecode)
 				count += INSTRUCTION_SIZE
 			} else if _, ok := instruction_table[tokens[1]]; ok {
-				// fmt.Println("found ", tokens[0], " in instruction table!")
+				// //fmt.Println("found ", tokens[0], " in instruction table!")
 				if _, ok := symbol_table[tokens[0]]; ok {
-					// fmt.Println("Label not in symbol table. Label for an instruction.")
+					// //fmt.Println("Label not in symbol table. Label for an instruction.")
 					instruction = tokens[1]
 					rest = tokens[2:]
 					bytecode = instruction_to_bytecode(instruction, rest)
 					writeBytecode(memory[count:], bytecode)
 					count += INSTRUCTION_SIZE
 				} else {
-					fmt.Println(tokens[0])
+					//fmt.Println(tokens[0])
 					log.Fatal("Symbol not found on first pass")
 				}
 			} else { // directive
@@ -365,12 +365,12 @@ func secondpass(filename string) {
 						count += BYT_SIZE
 					}
 				} else {
-					// fmt.Println(label)
+					// //fmt.Println(label)
 					// fmt.Fatal("Duplicate symbol in table")
 				}
 			}
 		} else if len(tokens) == 4 {
-			fmt.Println("There are 4 tokens")
+			//fmt.Println("There are 4 tokens")
 
 			label = tokens[0]
 			instruction = tokens[1]
@@ -380,18 +380,18 @@ func secondpass(filename string) {
 			if _, ok := symbol_table[label]; ok {
 				count += INSTRUCTION_SIZE
 			} else {
-				// fmt.Println(label)
+				// //fmt.Println(label)
 				// fmt.Fatal("Duplicate symbol in table")
 			}
 		}
 		PC_to_ASM_Line[count] = lineNum
 	}
 
-	fmt.Println("~~~~~~~~~~~~~End of second pass~~~~~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~~End of second pass~~~~~~~~~~~~~~~~~~")
 }
 
 func instruction_to_bytecode(instruction string, operands []string) string {
-	fmt.Println("instruction_to_bytecode() with instruction(", instruction, ") and operands(", operands, ")")
+	//fmt.Println("instruction_to_bytecode() with instruction(", instruction, ") and operands(", operands, ")")
 	var bytecode string
 
 	if instruction == "STR" || instruction == "LDR" || instruction == "STB" || instruction == "LDB" {
@@ -436,9 +436,9 @@ func instruction_to_bytecode(instruction string, operands []string) string {
 	case "DIV":
 		return fmt.Sprintf("%d %d %d", instruction_table[instruction], register_table[operands[0]], register_table[operands[1]])
 	case "AND":
-		fmt.Println("AND not implemented")
+		//fmt.Println("AND not implemented")
 	case "OR":
-		fmt.Println("OR not implemented")
+		//fmt.Println("OR not implemented")
 	case "CMP":
 		return fmt.Sprintf("%d %d %d", instruction_table[instruction], register_table[operands[0]], register_table[operands[1]])
 	case "TRP":
@@ -456,8 +456,9 @@ func instruction_to_bytecode(instruction string, operands []string) string {
 }
 
 func virtualmachine() {
-	fmt.Println("~~~~~~~~~~~~~~~~~Running Virtual Machine~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~~~~~~Running Virtual Machine~~~~~~~~~~~~~~")
 
+	nums := []int32{10, 3, 5, 7, 2, 9, 12, 14, 0}
 	var (
 		val, d_reg, s_reg, m_addr                  int32
 		s_addr, mode                               int32
@@ -476,30 +477,29 @@ func virtualmachine() {
 	registers[register_table["SL"]] = stack - 1000 // todo: where is heap?
 	registers[register_table["SP"]] = stack - 4
 	registers[register_table["SB"]] = stack
-	fmt.Println("Stack at location(", stack, ") in memory")
+	//fmt.Println("Stack at location(", stack, ") in memory")
 	PC = symbol_table["START"]
 	registers[register_table["PC"]] = PC
-	ENDLOC := symbol_table["END"]
 	for !done {
 		branch = false
 		PC = registers[register_table["PC"]]
-		if PC == ENDLOC {
-			done = true
-			break
-		}
 		IR = fetch(memory[PC:])
 
 		switch IR.opCode {
 		// TRAPS
 		case instruction_table["TRP"]:
-			fmt.Println("TRP instructions")
+			//fmt.Println("TRP instructions")
 
 			mode = IR.opd1
-			if mode == 1 {
+			if mode == 0 {
+				done = true
+				break
+			} else if mode == 1 {
 				fmt.Print(registers[3])
 			} else if mode == 2 {
 				// fmt.Print("Enter a num for fib: ")
-				registers[3] = 10
+				registers[3] = nums[0]
+				nums = nums[1:]
 				// _, _ = fmt.Scanf("%d", &registers[3])
 			} else if mode == 3 {
 				val = registers[3]
@@ -516,26 +516,26 @@ func virtualmachine() {
 					kb_buff, _ = reader.ReadBytes('\n')
 				}
 				registers[3] = int32(kb_buff[0])
-				fmt.Println("~~~~~~~~~~~~~~~Register 3: ", string(registers[3]))
+				//fmt.Println("~~~~~~~~~~~~~~~Register 3: ", string(registers[3]))
 				kb_buff = kb_buff[1:]
 			} else if mode == 99 {
 				// TRP 99 used for debuggging
-				fmt.Println("****************DEBUGGING LINE ", PC_to_ASM_Line[PC+12], " OF ASSEMBLY CODE****************")
+				//fmt.Println("****************DEBUGGING LINE ", PC_to_ASM_Line[PC+12], " OF ASSEMBLY CODE****************")
 			} else if mode == 98 {
-				fmt.Println(fetchInt(memory[MEMORY_SIZE-8:]))
+				//fmt.Println(fetchInt(memory[MEMORY_SIZE-8:]))
 			}
 		// JUMP INSTRUCTIONS
 		case instruction_table["JMP"]:
 			branch = true
 			l_addr = IR.opd1
 			registers[register_table["PC"]] = l_addr
-			fmt.Printf("JMP instruction: Branching to label at location(%d)\n", l_addr)
+			//fmt.Printf("JMP instruction: Branching to label at location(%d)\n", l_addr)
 			// printMemory()
 		case instruction_table["JMR"]:
 			branch = true
 			l_addr = registers[IR.opd1]
 			registers[register_table["PC"]] = l_addr
-			fmt.Printf("JMR instruction: Branching to address in s_reg(%d)\n", l_addr)
+			//fmt.Printf("JMR instruction: Branching to address in s_reg(%d)\n", l_addr)
 		case instruction_table["BNZ"]:
 			s_reg_name = IR.opd1
 			s_reg = registers[s_reg_name]
@@ -544,7 +544,7 @@ func virtualmachine() {
 				l_addr = IR.opd2
 				registers[register_table["PC"]] = l_addr
 			}
-			fmt.Printf("BNZ instruction: Branching to label at location(%d) if s_reg(%d) != 0\n", l_addr, s_reg_name)
+			//fmt.Printf("BNZ instruction: Branching to label at location(%d) if s_reg(%d) != 0\n", l_addr, s_reg_name)
 		case instruction_table["BGT"]:
 			s_reg_name = IR.opd1
 			s_reg = registers[s_reg_name]
@@ -553,7 +553,7 @@ func virtualmachine() {
 				l_addr = IR.opd2
 				registers[register_table["PC"]] = l_addr
 			}
-			fmt.Printf("BGT instruction: Branching to label at location(%d) if s_reg(%d) > 0\n", l_addr, s_reg_name)
+			//fmt.Printf("BGT instruction: Branching to label at location(%d) if s_reg(%d) > 0\n", l_addr, s_reg_name)
 		case instruction_table["BLT"]:
 			s_reg_name = IR.opd1
 			s_reg = registers[s_reg_name]
@@ -562,7 +562,7 @@ func virtualmachine() {
 				l_addr = IR.opd2
 				registers[register_table["PC"]] = l_addr
 			}
-			fmt.Printf("BLT instruction: Branching to label at location(%d) if s_reg(%d) < 0\n", l_addr, s_reg_name)
+			//fmt.Printf("BLT instruction: Branching to label at location(%d) if s_reg(%d) < 0\n", l_addr, s_reg_name)
 		case instruction_table["BRZ"]:
 			s_reg_name = IR.opd1
 			s_reg = registers[s_reg_name]
@@ -571,40 +571,40 @@ func virtualmachine() {
 				l_addr = IR.opd2
 				registers[register_table["PC"]] = l_addr
 			}
-			fmt.Printf("BRZ instruction: Branching to label at location(%d) if s_reg(%d) = 0\n", l_addr, s_reg_name)
+			//fmt.Printf("BRZ instruction: Branching to label at location(%d) if s_reg(%d) = 0\n", l_addr, s_reg_name)
 
 		// MOVE INSTRUCTIONS
 		case instruction_table["MOV"]:
 			d_reg_name = IR.opd1
 			s_reg_name = IR.opd2
 			registers[d_reg_name] = registers[s_reg_name]
-			fmt.Printf("MOV instruction: Moving s_reg(%d) into d_reg(%d)\n", s_reg_name, d_reg_name)
+			//fmt.Printf("MOV instruction: Moving s_reg(%d) into d_reg(%d)\n", s_reg_name, d_reg_name)
 		case instruction_table["LDA"]:
 			d_reg = IR.opd1
 			l_addr = IR.opd2
 			registers[d_reg] = l_addr
-			fmt.Printf("LDA instruction: Loading address of label at location(%d) in d_reg(%d)\n", l_addr, d_reg)
+			//fmt.Printf("LDA instruction: Loading address of label at location(%d) in d_reg(%d)\n", l_addr, d_reg)
 		case instruction_table["STR"]:
 			s_reg_name = IR.opd1
 			l_addr = IR.opd2
 			writeInt(memory[l_addr:], strconv.Itoa(int(registers[s_reg_name])))
-			fmt.Printf("STR instruction: Storing data into Mem/Label at location(%d) in s_reg(%d)\n", l_addr, s_reg_name)
+			//fmt.Printf("STR instruction: Storing data into Mem/Label at location(%d) in s_reg(%d)\n", l_addr, s_reg_name)
 			// printMemory()
 		case instruction_table["LDR"]:
 			d_reg = IR.opd1
 			s_addr = IR.opd2
 			registers[d_reg] = fetchInt(memory[s_addr:])
-			fmt.Printf("LDR instruction: Loading d_reg(%d) with data from Mem/Label at location(%d)\n", d_reg, s_addr)
+			//fmt.Printf("LDR instruction: Loading d_reg(%d) with data from Mem/Label at location(%d)\n", d_reg, s_addr)
 		case instruction_table["STB"]:
 			s_reg = IR.opd1
 			s_addr = IR.opd2
 			memory[s_addr] = byte(registers[s_reg])
-			fmt.Printf("STB instruction: Storing byte into Mem/Label at location(%d) from s_reg(%d)\n", s_addr, s_reg)
+			//fmt.Printf("STB instruction: Storing byte into Mem/Label at location(%d) from s_reg(%d)\n", s_addr, s_reg)
 		case instruction_table["LDB"]:
 			d_reg = IR.opd1
 			s_addr = IR.opd2
 			registers[d_reg] = int32(memory[s_addr])
-			fmt.Printf("LDB instruction: Loading byte into d_reg(%d) from Mem/Label at location (%d)\n", d_reg, s_addr)
+			//fmt.Printf("LDB instruction: Loading byte into d_reg(%d) from Mem/Label at location (%d)\n", d_reg, s_addr)
 
 		// ARITHMETIC INSTRUCTIONS
 		case instruction_table["ADD"]:
@@ -613,38 +613,38 @@ func virtualmachine() {
 			s_reg_name = IR.opd2
 			s_reg = registers[s_reg_name]
 			registers[d_reg_name] = d_reg + s_reg
-			fmt.Println("ADD instructions")
+			//fmt.Println("ADD instructions")
 		case instruction_table["ADI"]:
 			d_reg_name = IR.opd1
 			registers[d_reg_name] += IR.opd2
-			fmt.Printf("ADI instruction: Adding immediatte(%d) to d_reg(%d)\n", IR.opd2, d_reg_name)
+			//fmt.Printf("ADI instruction: Adding immediatte(%d) to d_reg(%d)\n", IR.opd2, d_reg_name)
 		case instruction_table["SUB"]:
 			d_reg_name = IR.opd1
 			d_reg = registers[d_reg_name]
 			s_reg_name = IR.opd2
 			s_reg = registers[s_reg_name]
 			registers[d_reg_name] = d_reg - s_reg
-			fmt.Println("SUB instructions")
+			//fmt.Println("SUB instructions")
 		case instruction_table["MUL"]:
 			d_reg_name = IR.opd1
 			d_reg = registers[d_reg_name]
 			s_reg_name = IR.opd2
 			s_reg = registers[s_reg_name]
 			registers[d_reg_name] = d_reg * s_reg
-			fmt.Println("MUL instructions")
+			//fmt.Println("MUL instructions")
 		case instruction_table["DIV"]:
 			d_reg_name = IR.opd1
 			d_reg = registers[d_reg_name]
 			s_reg_name = IR.opd2
 			s_reg = registers[s_reg_name]
 			registers[d_reg_name] = d_reg / s_reg
-			fmt.Println("DIV instructions")
+			//fmt.Println("DIV instructions")
 
 		// LOGICAL INSTRUCTIONS
 		case instruction_table["AND"]:
-			fmt.Println("AND not implemented in VM")
+			//fmt.Println("AND not implemented in VM")
 		case instruction_table["OR"]:
-			fmt.Println("OR not implemented in VM")
+			//fmt.Println("OR not implemented in VM")
 
 		// COMPARE INSRUCTIONS
 		case instruction_table["CMP"]:
@@ -660,7 +660,7 @@ func virtualmachine() {
 			} else if d_reg > s_reg {
 				registers[d_reg_name] = 1
 			}
-			fmt.Println("CMP instructions")
+			//fmt.Println("CMP instructions")
 
 		// REGISTER INDIRECT ADDRESSING INSTRUCTIONS
 		case instruction_table["STRI"]:
@@ -668,26 +668,26 @@ func virtualmachine() {
 			g_reg_name = IR.opd2
 			m_addr = registers[g_reg_name]
 			writeInt(memory[m_addr:], strconv.Itoa(int(registers[s_reg_name])))
-			fmt.Printf("STRI instruction: Storing data from s_reg(%d) to memory at RG(%d)\n", s_reg_name, g_reg_name)
+			//fmt.Printf("STRI instruction: Storing data from s_reg(%d) to memory at RG(%d)\n", s_reg_name, g_reg_name)
 		case instruction_table["LDRI"]:
 			d_reg_name = IR.opd1
 			g_reg_name = IR.opd2
 			m_addr = registers[g_reg_name]
 			registers[d_reg_name] = fetchInt(memory[m_addr:])
-			fmt.Printf("LDRI instruction: Load d_reg(%d) with data from memory at d_reg(%d)\n", d_reg_name, g_reg_name)
+			//fmt.Printf("LDRI instruction: Load d_reg(%d) with data from memory at d_reg(%d)\n", d_reg_name, g_reg_name)
 		case instruction_table["STBI"]:
 			s_reg_name = IR.opd1
 			g_reg_name = IR.opd2
 			m_addr = registers[g_reg_name]
 			memory[m_addr] = byte(registers[s_reg_name])
 			// printMemory()
-			fmt.Println("STBI instructions")
+			//fmt.Println("STBI instructions")
 		case instruction_table["LDBI"]:
 			d_reg_name = IR.opd1
 			g_reg_name = IR.opd2
 			m_addr = registers[g_reg_name]
 			registers[d_reg_name] = int32(memory[m_addr])
-			fmt.Println("LDBI instructions")
+			//fmt.Println("LDBI instructions")
 		}
 
 		check(err)
@@ -696,11 +696,11 @@ func virtualmachine() {
 			registers[register_table["PC"]] += INSTRUCTION_SIZE
 		}
 	}
-	fmt.Println("~~~~~~~~~~~~~~End of virtualmachine()~~~~~~~~~~~~~~~~~~")
+	//fmt.Println("~~~~~~~~~~~~~~End of virtualmachine()~~~~~~~~~~~~~~~~~~")
 }
 
 func main() {
-	// fmt.Println("Start of main program")
+	// //fmt.Println("Start of main program")
 	filename := "proj4.asm"
 	firstpass(filename)
 	secondpass(filename)
