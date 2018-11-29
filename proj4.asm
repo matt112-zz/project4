@@ -406,7 +406,8 @@ START   MOV     R8      SP          # compute space needed for activation record
 
     # Call fib()
 
-ffib        MOV     R8      SP          # compute space needed for activation record
+ffib    TRP 98   
+        MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
         ADI     R8      -4          # Adjust for space for passed paramter n
         ADI     R8      -24         # Space for R1-R6
@@ -699,7 +700,7 @@ w_parr  LDA     R4      Array
         
     # Pass parameters on the stack
         ADI     SP      -4
-        LDA     R4      part1_str
+        LDA     R4      part2_str
         STR     R4      SP          
 
     # Update the return address in the Stack Frame
