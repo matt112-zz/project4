@@ -345,7 +345,7 @@ fib_else MOV     R8      SP          # compute space needed for activation recor
 
 
 
-###### START OF PROGRAM ######
+################# PART 1 ########################
 START   MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
         ADI     R8      -4          # Adjust for space for passed paramter n
@@ -626,7 +626,8 @@ ffib    TRP 98
 
 fib_stop    TRP 99
 
-        
+        LDB     R3      NL
+        TRP     3
         LDR     R6      ZERO
         LDR     R2      I
         LDR     R1      IV
@@ -664,11 +665,11 @@ w_parr  LDA     R4      Array
 
  e_w_parr   LDB     R3      NL
             TRP     3
+            TRP 3
  
 
-# ################ END OF PART 1 ########################
+################# PART 2 ########################
 
-        TRP 99
         MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
         ADI     R8      -4          # Adjust for space for passed paramter n

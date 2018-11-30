@@ -459,7 +459,7 @@ func instruction_to_bytecode(instruction string, operands []string) string {
 func virtualmachine() {
 	log.Trace("~~~~~~~~~~~~~~~~~Running Virtual Machine~~~~~~~~~~~~~~")
 
-	nums := []int32{10, 3, 5, 7, 2, 9, 12, 14, 0}
+	nums := []int32{1, 5, 8, 9, 12, 0} // 17 is the highest
 	var (
 		val, d_reg, s_reg, m_addr                  int32
 		s_addr, mode                               int32
