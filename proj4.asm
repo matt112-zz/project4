@@ -84,22 +84,29 @@ fib_str2    .BYT    32
             .BYT    32
             .BYT    3
 
-part1_str   .BYT    80      # P
+part1&2_str   .BYT    80      # P
             .BYT    97      # a
             .BYT    114     # r
             .BYT    116     # t
             .BYT    32          
             .BYT    49      # 1
+            .BYT    32      
+            .BYT    97      # a
+            .BYT    110     # n
+            .BYT    100     # d
+            .BYT    32      
+            .BYT    50      # 2
             .BYT    58      # :
             .BYT    10
             .BYT    3
 
-part2_str   .BYT    80      # P
+
+part3_str   .BYT    80      # P
             .BYT    97      # a
             .BYT    114     # r
             .BYT    116     # t
             .BYT    32          
-            .BYT    50      # 2
+            .BYT    51      # 3
             .BYT    58      # :
             .BYT    10
             .BYT    3
@@ -146,7 +153,7 @@ end_p   MOV     SP      FP
 ###### int fib(int n) ######
 fib     MOV     R8      SP          # test for SO with Ret Addr + PFP + passed parameter + locals and temps
         ADI     R8      -16          # space for 5 int temps
-        CMP     R8      SL          # test for SO
+        CMP     R8      SL           # test for SO
         BLT     R8      OVERFLOW
         ADI     SP      -20          # adjust SP to word on top of AR
 
@@ -377,7 +384,7 @@ START   MOV     R8      SP          # compute space needed for activation record
         
     # Pass parameters on the stack
         ADI     SP      -4
-        LDA     R4      part1_str
+        LDA     R4      part1&2_str
         STR     R4      SP          
 
     # Update the return address in the Stack Frame
@@ -626,6 +633,8 @@ ffib    TRP 98
 
 fib_stop    TRP 99
 
+################# PART 2 ########################
+
         LDB     R3      NL
         TRP     3
         LDR     R6      ZERO
@@ -668,7 +677,7 @@ w_parr  LDA     R4      Array
             TRP 3
  
 
-################# PART 2 ########################
+################# PART 3 ########################
 
         MOV     R8      SP          # compute space needed for activation record
         ADI     R8      -4          # Adjust for space needed (Rtn Address & PFP)
@@ -701,7 +710,7 @@ w_parr  LDA     R4      Array
         
     # Pass parameters on the stack
         ADI     SP      -4
-        LDA     R4      part2_str
+        LDA     R4      part3_str
         STR     R4      SP          
 
     # Update the return address in the Stack Frame
@@ -727,7 +736,6 @@ w_parr  LDA     R4      Array
         LDR     R5      R7
         ADI     R7      -4
         LDR     R6      R7
-
 
 
 
